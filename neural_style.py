@@ -4,14 +4,12 @@ import os
 
 import numpy as np
 import scipy.misc
-
 from stylize import stylize
 
 import math
 from argparse import ArgumentParser
 
 from PIL import Image
-from flask import Flask, Response, request, stream_with_context
 
 # default arguments
 CONTENT_WEIGHT = 5e0
@@ -107,10 +105,11 @@ def build_parser():
             dest='overwrite', help='write file even if there is already a file with that name')
     return parser
 
-@aoo.route('/')
-def main():
+
+def draw(content, styles, output):
     parser = build_parser()
     options = parser.parse_args()
+    oprions = ( content, styles, output)
 
     if not os.path.isfile(options.network):
         parser.error("Network %s does not exist. (Did you forget to download it?)" % options.network)
@@ -196,7 +195,6 @@ def main():
             output_file = options.output
         if output_file:
             imsave(output_file, combined_rgb)
-    return 'Success!!'
 
 
 def imread(path):
@@ -213,6 +211,3 @@ def imread(path):
 def imsave(path, img):
     img = np.clip(img, 0, 255).astype(np.uint8)
     Image.fromarray(img).save(path, quality=95)
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
