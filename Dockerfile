@@ -14,4 +14,4 @@ RUN apt-get update
 
 RUN apt-get install -y libsm6 libxext6 libxrender-dev
 
-#CMD ["python", "app.py"]
+CMD ["python", "app.py"]
