@@ -117,7 +117,7 @@ class Gan():
 
         #content_image = imread(options.content)
         #style_images = [imread(style) for style in options.styles]
-        content_image = self.imread(content)
+        content_image = content
         style_images = [self.imread(style)]
 
 
@@ -161,12 +161,12 @@ class Gan():
                          "parameter must contain `%s` (e.g. `foo%s.jpg`)")
 
         # try saving a dummy image to the output path to make sure that it's writable
-        if os.path.isfile(output) and not options.overwrite:
-            raise IOError("%s already exists, will not replace it without the '--overwrite' flag" % output)
-        try:
-            self.imsave(output, np.zeros((500, 500, 3)))
-        except:
-            raise IOError('%s is not writable or does not have a valid file extension for an image file' % output)
+        #if os.path.isfile(output) and not options.overwrite:
+        #    raise IOError("%s already exists, will not replace it without the '--overwrite' flag" % output)
+        #try:
+        #    self.imsave(output, np.zeros((500, 500, 3)))
+        #except:
+        #    raise IOError('%s is not writable or does not have a valid file extension for an image file' % output)
 
         for iteration, image in stylize(
             network=options.network,
@@ -190,16 +190,18 @@ class Gan():
             print_iterations=options.print_iterations,
             checkpoint_iterations=options.checkpoint_iterations
         ):
-            output_file = None
-            combined_rgb = image
-            if iteration is not None:
-                if options.checkpoint_output:
-                    output_file = options.checkpoint_output % iteration
-            else:
-                output_file = output
-            if output_file:
-                self.imsave(output_file, combined_rgb)
-        return output_file
+            #output_file = None
+            #combined_rgb = image
+            output_img
+
+            #if iteration is not None:
+            #    if options.checkpoint_output:
+            #        output_file = options.checkpoint_output % iteration
+            #else:
+            #    output_file = output
+            #if output_file:
+            #    self.imsave(output_file, combined_rgb)
+        return output_img
 
 
     def imread(self, path):
@@ -212,6 +214,6 @@ class Gan():
             img = img[:,:,:3]
         return img
 
-    def imsave(self, path, img):
-        img = np.clip(img, 0, 255).astype(np.uint8)
-        Image.fromarray(img).save(path, quality=95)
+    #def imsave(self, path, img):
+    #    img = np.clip(img, 0, 255).astype(np.uint8)
+    #    Image.fromarray(img).save(path, quality=95)
