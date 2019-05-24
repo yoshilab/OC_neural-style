@@ -14,15 +14,30 @@ from argparse import ArgumentParser
 
 from PIL import Image
 from flask import Flask, Response, request, stream_with_context
+import base64
 
 app = Flask(__name__)
 
-@app.route('/picass/<content_name>')
-def sample(content_name):
-    content = cv2.imread('./images/' + content_name)
+def NdarrayToBase64(img):
+    result, img_data = cv2.imencode('.png', img)
+    img_base64 = base64.b64encode(img_data).decode("UTF-8")
+    return img_base64
+
+def Base64ToNdarry(url_base64):
+    img_data = base64.urlsafe_b64decode(url_base64)
+    img_np = np.fromstring(img_data, np.uint8)
+    src = cv2.imdecode(img_np, cv2.IMREAD_ANYCOLOR)
+    return src
+
+@app.route('/picass/<content_base64>')
+def sample(content_base64):
+    content = Base64ToNdarry(content_base64)
     content_g = cv2.cvtColor(content, cv2.COLOR_BGR2GRAY)
-    cv2.imwrite('./output/' + content_name, content_g)
-    return 'Success!!'
+    #cv2.imwrite('./output/' + content_name, content_g)
+    #with open(SAVE_DIR + content_name, "rb") as f:
+    #    rimg = f.read()
+    #rimg64 = base64.b64encode(rimg).decode("UTF-8")
+    return NdarrayToBase64(content_g)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
