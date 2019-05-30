@@ -13,7 +13,7 @@ import math
 from argparse import ArgumentParser
 
 from PIL import Image
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, send_file, url_for, jsonify
 import base64, datetime
 
 app = Flask(__name__)
@@ -33,23 +33,35 @@ def Base64ToNdarry(img64):
 def index():
     return render_template('index.html')
 
-@app.route('/picass', methods=['POST'])
+@app.route('/images/<path:path>')
+def get_image(path):
+    return send_file('images/' + path)
+
+@app.route('/picass', methods=['GET', 'POST'])
 def sample():
-    content_base64 = request.form['image']
-    content = Base64ToNdarry(content_base64)
+    if request.method == 'POST':
+        content_base64 = request.form['image']
+        content = Base64ToNdarry(content_base64)
 
-    dt = datetime.datetime.today()
-    dt_formatted = dt.strftime("%Y%m%d%H%M%S")
-    extension = '.png'
-    capture_img_name = os.path.join(app.config['./images'], 'cap_' + dt_formatted + extension)
-    generate_img_name = os.path.join(app.config['./output'], 'gen_' + dt_formatted + extension)
+        dt = datetime.datetime.today()
+        dt_formatted = dt.strftime("%Y%m%d%H%M%S")
+        extension = '.png'
+        capture_img_name = os.path.join('/images/input', 'cap_' + dt_formatted + extension)
+        generate_img_name = os.path.join('/images/output', 'gen_' + dt_formatted + extension)
 
-    cv2.imwrite(capture_img_name, content)
+        cv2.imwrite('/app/' + capture_img_name, content)
 
-    content_g = cv2.cvtColor(content, cv2.COLOR_BGR2GRAY)
-    cv2.imwrite(generate_img_name, content_g)
+        content_g = cv2.cvtColor(content, cv2.COLOR_BGR2GRAY)
+        cv2.imwrite('/app/' + generate_img_name, content_g)
 
-    return render_template('index.html', generate_img = generate_img_name, capture_img = capture_img_name)
+        res = {
+            'org_url' : capture_img_name,
+            'gen_url'  : generate_img_name
+        }    
+
+        return jsonify(res)
+    else:
+        return redirect(url_for('index'))
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)

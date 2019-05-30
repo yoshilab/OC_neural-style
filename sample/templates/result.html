@@ -1,13 +1,18 @@
 <!DOCTYPE html>
 <html>
     <head>
+      <meta charset="UTF-8">
+      <meta http-equiv="Pragma" content="no-cache">
+      <meta http-equiv="Cache-Control" content="no-cache">
     </head>
     <body>
+      <dir id="show__image">
       {% if capture_img %}
         <img src="{{ capture_img }}">
       {% endif %}
       {% if generate_img %}
         <img src="{{ generate_img }}">
       {% endif %}
+      </dir> 
     </body>
 </html>

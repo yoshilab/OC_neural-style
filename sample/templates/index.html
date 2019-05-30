@@ -15,12 +15,12 @@
   <!-- キャプチャした静止画が描画されます。 -->
   <canvas id="capture_image"></canvas>
 
-  {% if capture_img %}
+  <div id="original">
     <img src="{{ capture_img }}">
-  {% endif %}
-  {% if generate_img %}
+  </div>
+  <div id="generate">
     <img src="{{ generate_img }}">
-  {% endif %}
+  </div> 
 </body>
 <script>
 
@@ -60,35 +60,20 @@
         const fd = new FormData();
         fd.append("image", base64_png);
         const BASE_URL = "http://localhost:5000/picass";
-        /*
-        axios
-          .post(BASE_URL, fd)
-          .then(function (response) {
-            console.log("response", response);
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
-        */
+  
         $.ajax({
             url: BASE_URL,
             type:'POST',
             data : fd,
             processData: false,
-            contentType: false
-            /*success: function() {
-
-              var img = new Image();
-              var gi = generate_image.getContext('2d');
-              img.src = img64;
-              img.onload = function() {
-                gi.drawImage(img, 0, 0);
-              }
-
-            },*/
-            /*error: function(XMLHttpRequest, textStatus, errorThrown) {
-            alert("error");
-          }*/
+            contentType: false, 
+            success: function(data) {
+              $('#original img').attr('src', data.org_url );
+              $('#generate img').attr('src', data.gen_url );
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+              alert("error");
+            }
         });
     }
 </script>
