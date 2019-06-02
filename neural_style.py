@@ -23,7 +23,7 @@ BETA1 = 0.9
 BETA2 = 0.999
 EPSILON = 1e-08
 STYLE_SCALE = 1.0
-ITERATIONS = 1000
+ITERATIONS = 1500
 VGG_PATH = '/app/imagenet-vgg-verydeep-19.mat'
 POOLING = 'max'
 
@@ -196,9 +196,7 @@ def generate(content, style, output):
         else:
             output_file = output
         if output_file:
-            self.imsave(output_file, combined_rgb)
-
-    return output_file
+            imsave(output_file, combined_rgb)
 
 
 def imread(path):

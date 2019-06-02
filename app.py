@@ -28,13 +28,15 @@ def create_filename():
 
 def save_image(data, dir, filename):
     img_path = os.path.join(dir, filename)
-    cv2.imwrite('/app/' + img_path, data)
+    size = (560, 420)
+    resize_data = cv2.resize(data, size)
+    cv2.imwrite('/app' + img_path, resize_data)
     return img_path
 
 def draw(content, style, output):
     #gan = ns.Gan()
     #generate_img = gan.generate(content, style, output)
-    return ns.generate(content, style, output)
+    ns.generate(content, style, output)
 
 @app.route('/')
 def index():
@@ -53,7 +55,7 @@ def picasso():
     #output = './output_images/picasso_' + content
     #generate_img = cv2.cvtColor(content, cv2.COLOR_BGR2GRAY)
     generate_img_path = '/images/output/pcs_' + filename
-    draw('/app/' + capture_img_path, '/app/style_images/picasso.jpg', '/app' + generate_img_path)
+    draw('/app' + capture_img_path, '/app/style_images/picasso.jpg', '/app' + generate_img_path)
     res = {
         'org_url' : capture_img_path,
         'gen_url'  : generate_img_path
@@ -67,8 +69,8 @@ def gogh():
     filename = create_filename()
     capture_img_path = save_image(content, '/images/input', 'cap_' + filename)
     #output = './output_images/picasso_' + content
-    generate_img = draw(capture_img_path, '/app/style_images/gogh.png')
-    generate_img_path = save_image(generate_img, '/images/output', 'gogh_' + filename)
+    generate_img_path = '/images/output/ggh_' + filename
+    draw('/app' + capture_img_path, '/app/style_images/gogh.png', '/app' + generate_img_path)
     res = {
         'org_url' : capture_img_path,
         'gen_url' : generate_img_path
@@ -79,11 +81,11 @@ def gogh():
 def munch():
     content_base64 = request.form['image']
     content = Base64ToNdarry(content_base64)
-    filename = create_filename
+    filename = create_filename()
     capture_img_path = save_image(content, '/images/input', 'cap_' + filename)
     #output = './output_images/picasso_' + content
-    generate_img = draw(content, '/app/style_images/munch.jpg')
-    generate_img_path = save_image(generate_img, '/images/output', 'munch_' + filename)
+    generate_img_path = '/images/output/mnc_' + filename
+    draw('/app' + capture_img_path, '/app/style_images/munch.jpg', '/app' + generate_img_path)
     res = {
         'org_url' : capture_img_path,
         'gen_url' : generate_img_path
