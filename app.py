@@ -1,14 +1,11 @@
 import os
 import cv2
 import json
-import tempfile
-# import subprocess
+import numpy as np
 
-from flask import Flask, Response, request, stream_with_context
-from src import Gan
-
-CAMERA_PORT = -1
-CASCADE_PATH = './src/haarcascades/haarcascade_frontalface_alt2.xml'
+from flask import Flask, request, render_template, send_file, url_for, jsonify
+import base64, datetime
+import neural_style as ns
 
 app = Flask(__name__)
 
@@ -17,35 +14,83 @@ def NdarrayToBase64(img):
     img_base64 = base64.b64encode(img_data).decode("UTF-8")
     return img_base64
 
-def Base64ToNdarry(url_base64):
-    img_data = base64.urlsafe_b64decode(url_base64)
+def Base64ToNdarry(img64):
+    img_data = base64.b64decode(img64.split(',')[1])
     img_np = np.fromstring(img_data, np.uint8)
     src = cv2.imdecode(img_np, cv2.IMREAD_ANYCOLOR)
     return src
 
-def draw(content, style):
-    gan = Gan()
-    output_img = gan.generate(content, style, output)
-    return output_img
+def create_filename():
+    dt = datetime.datetime.today()
+    dt_formatted = dt.strftime("%Y%m%d%H%M%S")
+    extension = '.png'
+    return dt_formatted + extension
 
-@app.route('/picasso/<content>')
-def picasso(content):
+def save_image(data, dir, filename):
+    img_path = os.path.join(dir, filename)
+    cv2.imwrite('/app/' + img_path, data)
+    return img_path
+
+def draw(content, style, output):
+    #gan = ns.Gan()
+    #generate_img = gan.generate(content, style, output)
+    return ns.generate(content, style, output)
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/images/<path:path>')
+def get_image(path):
+    return send_file('images/' + path)
+
+@app.route('/picasso', methods=['POST'])
+def picasso():
+    content_base64 = request.form['image']
     content = Base64ToNdarry(content_base64)
+    filename = create_filename()
+    capture_img_path = save_image(content, '/images/input', 'cap_' + filename)
     #output = './output_images/picasso_' + content
-    output_img = draw(content, '/app/style_images/picasso.jpg')
-    return NdarrayToBase64(output_img)
+    #generate_img = cv2.cvtColor(content, cv2.COLOR_BGR2GRAY)
+    generate_img_path = '/images/output/pcs_' + filename
+    draw('/app/' + capture_img_path, '/app/style_images/picasso.jpg', '/app' + generate_img_path)
+    res = {
+        'org_url' : capture_img_path,
+        'gen_url'  : generate_img_path
+    }
+    return jsonify(res)
 
-@app.route('/gogh/<content>')
-def gogh(content):
+@app.route('/gogh', methods=['POST'])
+def gogh():
+    content_base64 = request.form['image']
     content = Base64ToNdarry(content_base64)
-    output_img = draw(content, '/app/style_images/gogh.png')
-    return NdarrayToBase64(output_img)
+    filename = create_filename()
+    capture_img_path = save_image(content, '/images/input', 'cap_' + filename)
+    #output = './output_images/picasso_' + content
+    generate_img = draw(capture_img_path, '/app/style_images/gogh.png')
+    generate_img_path = save_image(generate_img, '/images/output', 'gogh_' + filename)
+    res = {
+        'org_url' : capture_img_path,
+        'gen_url' : generate_img_path
+    }
+    return jsonify(res)
 
-@app.route('/munch/<content>')
-def munch(content):
+@app.route('/munch', methods=['POST'])
+def munch():
+    content_base64 = request.form['image']
     content = Base64ToNdarry(content_base64)
-    output_img = draw(content, '/app/style_images/munch.jpg')
-    return NdarrayToBase64(output_img)
+    filename = create_filename
+    capture_img_path = save_image(content, '/images/input', 'cap_' + filename)
+    #output = './output_images/picasso_' + content
+    generate_img = draw(content, '/app/style_images/munch.jpg')
+    generate_img_path = save_image(generate_img, '/images/output', 'munch_' + filename)
+    res = {
+        'org_url' : capture_img_path,
+        'gen_url' : generate_img_path
+    }
+    return jsonify(res)
+
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)

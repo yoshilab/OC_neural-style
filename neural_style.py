@@ -1,15 +1,16 @@
-# Copyright (c) 2015-2018 Anish Athalye. Released under GPLv3.
-
+# Copyright (c) 2015-2018 Anish Athalye. Released under GPLv3
 import os
 
 import numpy as np
 import scipy.misc
+
 from stylize import stylize
 
 import math
 from argparse import ArgumentParser
 
 from PIL import Image
+from flask import Flask, Response, request, stream_with_context
 
 # default arguments
 CONTENT_WEIGHT = 5e0
@@ -23,21 +24,21 @@ BETA2 = 0.999
 EPSILON = 1e-08
 STYLE_SCALE = 1.0
 ITERATIONS = 1000
-VGG_PATH = 'imagenet-vgg-verydeep-19.mat'
+VGG_PATH = '/app/imagenet-vgg-verydeep-19.mat'
 POOLING = 'max'
 
 def build_parser():
     parser = ArgumentParser()
     parser.add_argument('--content',
             dest='content', help='content image',
-            metavar='CONTENT', required=True)
+            metavar='CONTENT')
     parser.add_argument('--styles',
             dest='styles',
             nargs='+', help='one or more style images',
-            metavar='STYLE', required=True)
+            metavar='STYLE')
     parser.add_argument('--output',
             dest='output', help='output path',
-            metavar='OUTPUT', required=True)
+            metavar='OUTPUT')
     parser.add_argument('--iterations', type=int,
             dest='iterations', help='iterations (default %(default)s)',
             metavar='ITERATIONS', default=ITERATIONS)
@@ -105,17 +106,18 @@ def build_parser():
             dest='overwrite', help='write file even if there is already a file with that name')
     return parser
 
-
-def draw(content, styles, output):
+def generate(content, style, output):
     parser = build_parser()
     options = parser.parse_args()
-    oprions = ( content, styles, output)
 
     if not os.path.isfile(options.network):
         parser.error("Network %s does not exist. (Did you forget to download it?)" % options.network)
 
-    content_image = imread(options.content)
-    style_images = [imread(style) for style in options.styles]
+    #content_image = imread(options.content)
+    #style_images = [imread(style) for style in options.styles]
+    content_image = imread(content)
+    style_images = [imread(style)]
+
 
     width = options.width
     if width is not None:
@@ -157,12 +159,12 @@ def draw(content, styles, output):
                      "parameter must contain `%s` (e.g. `foo%s.jpg`)")
 
     # try saving a dummy image to the output path to make sure that it's writable
-    if os.path.isfile(options.output) and not options.overwrite:
-        raise IOError("%s already exists, will not replace it without the '--overwrite' flag" % options.output)
+    if os.path.isfile(output) and not options.overwrite:
+        raise IOError("%s already exists, will not replace it without the '--overwrite' flag" % output)
     try:
-        imsave(options.output, np.zeros((500, 500, 3)))
+        imsave(output, np.zeros((500, 500, 3)))
     except:
-        raise IOError('%s is not writable or does not have a valid file extension for an image file' % options.output)
+        raise IOError('%s is not writable or does not have a valid file extension for an image file' % output)
 
     for iteration, image in stylize(
         network=options.network,
@@ -192,9 +194,11 @@ def draw(content, styles, output):
             if options.checkpoint_output:
                 output_file = options.checkpoint_output % iteration
         else:
-            output_file = options.output
+            output_file = output
         if output_file:
-            imsave(output_file, combined_rgb)
+            self.imsave(output_file, combined_rgb)
+
+    return output_file
 
 
 def imread(path):
@@ -206,7 +210,6 @@ def imread(path):
         # PNG with alpha channel
         img = img[:,:,:3]
     return img
-
 
 def imsave(path, img):
     img = np.clip(img, 0, 255).astype(np.uint8)
