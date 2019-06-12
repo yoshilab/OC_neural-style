@@ -16,11 +16,10 @@ HTTPリクエストで絵のスタイルと画像を指定すると画像を指�
    
 5. これで多分サーバが立ち上がるから試してみるぞ!  
    ブラウザから以下のURLにアクセス!!  
-   同じPCからのアクセス `http://localhost:5000/gogh/content_image.png`  
-   違うPCからのアクセス `http://(サーバのIPアドレス)/gogh/content_image.png`  
+   同じPCからのアクセス `http://localhost:5000`  
+   違うPCからのアクセス `http://(サーバのIPアドレス):5000`  
    
-6. 上の手順でできなかったら頑張って動かしてくれ!!  
-   あと他のスタイルの指定とかコンテンツの指定とかはapp.pyを見れば分かる，知らんけど  
+6. 上の手順でできなかったら頑張って動かしてくれ!! 
    
 ## 参考文献・プログラム  
 1. GANのプログラム https://github.com/anishathalye/neural-style  
