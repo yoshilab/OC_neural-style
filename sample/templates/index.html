@@ -15,9 +15,9 @@
   <!-- キャプチャした静止画が描画されます。 -->
   <canvas id="capture_image"></canvas>
 
-  <div id="original">
+  <!--div id="original">
     <img src="{{ capture_img }}">
-  </div>
+  </div-->
   <div id="generate">
     <img src="{{ generate_img }}">
   </div> 
@@ -40,7 +40,7 @@
     .catch(err => alert(`${err.name} ${err.message}`));
 
     function startCopyFrame(){
-        setInterval("copyFrame()", 500);
+        setInterval("copyFrame()", 150);
     }
 
     // 「静止画取得」ボタンが押されたら「<canvas id="capture_image">」に映像のコマ画像を表示します。
@@ -52,9 +52,8 @@
         var va = document.getElementById('video_area');
         var btn = document.getElementById('cap_botton');
 
-        //va.style.display="none"
-        //btn.style.display="none"
-
+        va.style.display="none"
+        btn.style.display="none"
         canvas_capture_image.width  = va.videoWidth;
         canvas_capture_image.height = va.videoHeight;
         cci.drawImage(va, 0, 0);  // canvasに『「静止画取得」ボタン』押下時点の画像を描画。
@@ -71,7 +70,7 @@
             processData: false,
             contentType: false, 
             success: function(data) {
-              $('#original img').attr('src', data.org_url );
+              //$('#original img').attr('src', data.org_url );
               $('#generate img').attr('src', data.gen_url );
             },
             error: function(XMLHttpRequest, textStatus, errorThrown) {
