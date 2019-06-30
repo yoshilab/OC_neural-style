@@ -46,14 +46,16 @@ def sample():
         dt = datetime.datetime.today()
         dt_formatted = dt.strftime("%Y%m%d%H%M%S")
         extension = '.png'
-        capture_img_name = os.path.join('/images/input', 'cap_' + dt_formatted + extension)
-        generate_img_name = os.path.join('/images/output', 'gen_' + dt_formatted + extension)
+        #capture_img_name = os.path.join('/images/input', 'cap_' + dt_formatted + extension)
+        #generate_img_name = os.path.join('/images/output', 'gen_' + dt_formatted + extension)
 
-        cv2.imwrite('/app/' + capture_img_name, content)
+        #cv2.imwrite('/app/' + capture_img_name, content)
 
         content_g = cv2.cvtColor(content, cv2.COLOR_BGR2GRAY)
-        cv2.imwrite('/app/' + generate_img_name, content_g)
+        #cv2.imwrite('/app/' + generate_img_name, content_g)
 
+        capture_img_name = 'data:image/png;base64,' + NdarrayToBase64(content)
+        generate_img_name = 'data:image/png;base64,' + NdarrayToBase64(content_g)
         res = {
             'org_url' : capture_img_name,
             'gen_url'  : generate_img_name
