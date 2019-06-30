@@ -11,7 +11,7 @@
   <!-- カメラ映像が描画されます。 -->
   <video id="video_area" style="background-color: #000" autoplay></video>
   <!-- 押下するとカメラ映像から静止画をキャプチャします。 -->
-  <button id="cap_botton" onclick="copyFrame()">静止画取得</button>
+  <button id="cap_botton" onclick="startCopyFrame()">静止画取得</button>
   <!-- キャプチャした静止画が描画されます。 -->
   <canvas id="capture_image"></canvas>
 
@@ -39,6 +39,9 @@
     .then(stream => $video.srcObject = stream)
     .catch(err => alert(`${err.name} ${err.message}`));
 
+    function startCopyFrame(){
+        setInterval("copyFrame()", 500);
+    }
 
     // 「静止画取得」ボタンが押されたら「<canvas id="capture_image">」に映像のコマ画像を表示します。
     function copyFrame() {
@@ -49,8 +52,8 @@
         var va = document.getElementById('video_area');
         var btn = document.getElementById('cap_botton');
 
-        va.style.display="none"
-        btn.style.display="none"
+        //va.style.display="none"
+        //btn.style.display="none"
 
         canvas_capture_image.width  = va.videoWidth;
         canvas_capture_image.height = va.videoHeight;
