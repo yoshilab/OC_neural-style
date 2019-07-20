@@ -6,7 +6,7 @@ HTTPリクエストで絵のスタイルと画像を指定すると画像を指�
 
 ## 使い方
 1. このリポジトリをクローンするぞ！  
-   `git clone https://github.com/yoshilab/OC_GAN_neural-style.git`  
+   `git clone https://github.com/yoshilab/OC_neural-style.git`
    
 2. ディレクトリを移動だ!  
    `cd OC_GAN_neural-style`  
