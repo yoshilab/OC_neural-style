@@ -1,6 +1,9 @@
 # Neural-style on flask
 HTTPリクエストで絵のスタイルと画像を指定すると画像を指定したスタイルに変換するぞ!
 
+## 仕様
+1. なんか知らんけど，Mac版SafariとFirefoxで結果の動的表示ができんかったき，WindowsのFirefoxなら動くことを確認できたき，研究室のVAIOでも使ってみて
+
 ## 使い方
 1. このリポジトリをクローンするぞ！  
    `git clone https://github.com/yoshilab/OC_GAN_neural-style.git`  
@@ -12,7 +15,7 @@ HTTPリクエストで絵のスタイルと画像を指定すると画像を指�
    `docker build ./ -t neural-style`  
    
 4. ディレクトリをマウントしながら，ポートフォワーディングしながらコンテナを起動するぞ!   
-   `docker run -it --rm -v ./:/app -p 5000:5000 neural-style`  
+   `docker run -it --rm -v $(pwd):/app -p 5000:5000 neural-style`  
    
 5. これで多分サーバが立ち上がるから試してみるぞ!  
    ブラウザから以下のURLにアクセス!!  
