@@ -9,7 +9,7 @@ Tensor, DGXでの動作は確認しましたが，その他の演算マシンで
 Webページの閲覧がOSやブラウザのバージョンによってはうまく実行できない場合があります．
 一応，研究室のVAIOのFirefoxでは動作しましたが，iMacのSafari,Firefoxでは動作しなかったので注意！
 
-##使い方
+## 使い方
 
 1. Web&アプリケーションサーバとなるPC上でイメージを作るために`docker build ./ -t fast-ns`を実行．
 2. イメージをコンテナとして動かすために`nvidia-docker run --rm -e NVIDIA_VISIBLE_DEVICES=’0 -p 5000:5000 -v $(pwd):/app fast-ns`を実行．
