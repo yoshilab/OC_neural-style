@@ -9,7 +9,7 @@
 </head>
 <body>
   <!-- カメラ映像が描画されます。 -->
-  <video id="video_area" style="background-color: #000" autoplay></video></br>
+  <video id="video_area" style="background-color: #000" autoplay muted playsinline></video></br>
   <!-- 押下するとカメラ映像から静止画をキャプチャします。 -->
   <button id="cap_botton1" onclick="copyFrame(0)">ピカソ</button>
   <!-- 押下するとカメラ映像から静止画をキャプチャします。 -->
@@ -73,7 +73,8 @@
         fd.append("image", base64_png);
         var base_url = null;
         if(id == 0) {
-          base_url = "http://172.21.39.229:5000/picasso";
+          //base_url = "http://172.21.39.229:5000/picasso";
+          base_url = "http://localhost:5000/wave";
         } else if (id == 1) {
           base_url = "http://172.21.39.229:5000/gogh";
         } else if (id == 2) {

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Cache-Control" content="no-cache">
+  <title>OC_GAN</title>
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+</head>
+<body>
+  <div align = "center">
+  <!-- カメラ映像が描画されます。 -->
+  <video id="video_area" style="background-color: #000" autoplay></video>
+
+  <!-- キャプチャした静止画が描画されます。 -->
+  <canvas id="capture_image"></canvas>
+
+  <!--生成した画像が表示されます-->
+  <div id="generate">
+    <img src="{{ generate_img }}">
+  </div>
+
+  <!-- 押下するとカメラ映像から静止画をキャプチャします。 -->
+  <button id="cap_botton" onclick="startCopyFrame()">静止画取得</button>
+  <form name="form">
+    <select name="style">
+      <option value="la_muse">la_muse</option>
+      <option value="rain_princess">rain_princess</option>
+      <option value="scream">the_scream</option>
+      <option value="wreck">the_shipwreck</option>
+      <option value="wave">wave</option>
+      <option value="udnie">udnie</option>
+    </select>
+  </form>
+  </div>
+</body>
+
+<script>
+
+    // getUserMedia が使えないときは、『getUserMedia()が利用できないブラウザです！』と言ってね。
+    if (typeof navigator.mediaDevices.getUserMedia !== 'function') {
+        const err = new Error('getUserMedia()が利用できないブラウザです！');
+        alert(`${err.name} ${err.message}`);
+        throw err;
+    }
+
+    // 操作する画面エレメント変数定義します。
+    const $video = document.getElementById('video_area');  // 映像表示エリア
+
+    // 「スタートボタン」を押下したら、getUserMedia を使って映像を「映像表示エリア」に表示してね。
+    navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+    .then(stream => $video.srcObject = stream)
+    .catch(err => alert(`${err.name} ${err.message}`));
+
+    function startCopyFrame(){
+        setInterval("copyFrame()", 3000);
+    }
+
+    // 「静止画取得」ボタンが押されたら「<canvas id="capture_image">」に映像のコマ画像を表示します。
+    function copyFrame() {
+
+        var canvas_capture_image = document.getElementById('capture_image');
+        var generate_image = document.getElementById('generate');
+        var cci = canvas_capture_image.getContext('2d');
+        var va = document.getElementById('video_area');
+        var btn = document.getElementById('cap_botton');
+        var mode = document.form.style;
+        var num = mode.selectedIndex;
+        var mode_val = mode.options[num].value;
+
+        va.style.display="none"
+        btn.style.display="none"
+        canvas_capture_image.style.display="None"
+        canvas_capture_image.width  = va.videoWidth;
+        canvas_capture_image.height = va.videoHeight;
+        cci.drawImage(va, 0, 0);  // canvasに『「静止画取得」ボタン』押下時点の画像を描画。
+
+        const base64_png = canvas_capture_image.toDataURL("image/png");
+        const fd = new FormData();
+        fd.append("image", base64_png);
+        const BASE_URL = "http://172.21.39.229:5000/draw/";
+
+        const POST_URL = BASE_URL + mode_val;
+
+        $.ajax({
+            url: POST_URL,
+            type:'POST',
+            data : fd,
+            processData: false,
+            contentType: false,
+            success: function(data) {
+              //$('#original img').attr('src', data.org_url );
+              $('#generate img').attr('src', data.generate_img );
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+            }
+        });
+    }
+
+    function changeMode(mode) {
+      if(mode == 0) style = "/wave";
+    }
+
+</script>
+</html>
