@@ -4,10 +4,10 @@
   <meta charset="UTF-8">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Cache-Control" content="no-cache">
-  <title>OC_GAN</title>
+  <title>OC_neural-style</title>
   <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 </head>
-<body>
+<body id = "wrapper">
   <div align = "center">
   <!-- カメラ映像が描画されます。 -->
   <video id="video_area" style="background-color: #000" autoplay></video>
@@ -32,6 +32,7 @@
       <option value="udnie">udnie</option>
     </select>
   </form>
+  </div>
   </div>
 </body>
 
@@ -81,7 +82,7 @@
         const BASE_URL = "http://172.21.39.229:5000/draw/";
 
         const POST_URL = BASE_URL + mode_val;
-
+        
         $.ajax({
             url: POST_URL,
             type:'POST',
@@ -91,6 +92,8 @@
             success: function(data) {
               //$('#original img').attr('src', data.org_url );
               $('#generate img').attr('src', data.generate_img );
+              $("#wrapper").css("background","url('../images/style_trans/" + mode_val + ".png')");
+              $("#wrapper").css("background-size","20% auto");
             },
             error: function(XMLHttpRequest, textStatus, errorThrown) {
             }
