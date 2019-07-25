@@ -2,7 +2,7 @@
 
 カメラで写真を連続撮影し，指定のスタイルに画像を変換するWebアプリです．[元となるプログラム](https://github.com/lengstrom/fast-style-transfer)
 
-## 留意事項
+## 注意事項
 
 Tensor, DGXでの動作は確認しましたが，その他の演算マシンでの動作は確認してません．
 
