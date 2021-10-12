@@ -1,6 +1,6 @@
 Flask==1.0.2
 numpy==1.15.4
-opencv-contrib-python==3.4.5.20
+opencv-contrib-python==3.4.7.28
 Pillow  # provides PIL
 scipy==1.1.0
 tensorflow-gpu >= 1.0  # installs tensorflow with GPU support, should still work even without GPU
